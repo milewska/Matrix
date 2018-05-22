@@ -61,8 +61,15 @@ var addRow=function(obj){
     var loco=obj.dataset.location//+".newKey"
     loco=loco.split('.');
     loco.splice(-1,1);
-    loco.push(randomKey("newkey"));
-    setDeep(tables,loco,randomKey("downValue"),"add");
+    loco.push(randomKey("newaddkey"));
+
+    if(obj.dataset.celltype=="cell"){
+    //     loco.splice(-1,1);
+        setDeep(tables,loco,randomKey("downValue"),"addtab");
+    }
+    else{
+        setDeep(tables,loco,randomKey("downValue"),"add");
+    }
     showTables();
 }
 
@@ -109,6 +116,15 @@ function setDeep(obj, path, value, mode) {
     		// // return a[b];
       //   }
       // Object.defineProperty(o, new_key, Object.getOwnPropertyDescriptor(o, old_key));
+        if (mode=="addtab"){
+            if (level === path.length-1){
+                console.log("Deep: addtab",a,b,value,a[b]);
+                    console.log("ADDCELL")
+                    a[b]={somekey:"val"};
+                    level=path.length; //so that we jump out of the reduce
+                    return a[b];
+            }
+        }
         if (level === path.length){
         	if(mode=="key"){
         		console.log("Deep: key",a,b,value,a[b]);
@@ -120,6 +136,11 @@ function setDeep(obj, path, value, mode) {
         		return;
         	}else if (mode=="add"){
                 console.log("Deep: add",a,b,value,a[b]);
+                if(typeof a !== "object"){
+                    console.log("ADDCELL")
+                    a[b]={somekey:"val"};
+                    return a[b];
+                }
                 a[b]=value;
                 Object.defineProperty(a, value, Object.getOwnPropertyDescriptor(a, b));
                 delete a[b];
