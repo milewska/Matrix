@@ -1,28 +1,34 @@
 $(document).ready(function(){
 	showTables();
-    //Tests
-    addRow(document.getElementById('people.storm'))
-    addRow(document.getElementById('people.storm.email'))
-    addRow(document.getElementById('people.storm.roles'))
+    // Tests
+    addRow(document.getElementById("people-storm"))
+    addRow(document.getElementById('people-storm-email'))
+    addRow(document.getElementById('people-storm-roles'))
     addRow(document.getElementById('people'))
     addRow(document.getElementById("topLevel"))
 
-    changeCell(document.getElementById('people.storm'))
-    changeCell(document.getElementById('people.storm.email'))
-    changeCell(document.getElementById('people.storm.email.21'))
-    changeCell(document.getElementById('people.storm.roles'))
-    changeCell(document.getElementById('people.storm.roles.main'))
-    changeCell(document.getElementById('people.storm.roles.main.judge'))
-    changeCell(document.getElementById('people'))
-    changeCell(document.getElementById("topLevel"))
+
+    $("#people-storm").html("SUPERSTORM");
+    $('#people-storm').trigger("blur");
+    // $('#people-SUPERSTORM-roles').trigger("blur");
+
+
+    // changeCell(document.getElementById("people-SUPERSTORM"))
+    // changeCell(document.getElementById('people-storm-email'))
+    // changeCell(document.getElementById('people-storm-email-21'))
+    // changeCell(document.getElementById('people.storm.roles'))
+    // changeCell(document.getElementById('people.storm.roles.main'))
+    // changeCell(document.getElementById('people.storm.roles.main.judge'))
+    // changeCell(document.getElementById('people'))
+    // changeCell(document.getElementById("topLevel"))
 
 
 
-    killRow(document.getElementById('people.storm.email'))
-    killRow(document.getElementById('people.storm.roles'))
-    killRow(document.getElementById('people.storm'))
-    killRow(document.getElementById('people'))
-    killRow(document.getElementById("topLevel"))
+    // killRow(document.getElementById('people'))
+    // killRow(document.getElementById('people.storm.roles'))
+    // killRow(document.getElementById('people.storm'))
+    // killRow(document.getElementById('people'))
+    // killRow(document.getElementById("topLevel"))
 
 
 
