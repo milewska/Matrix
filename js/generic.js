@@ -20,63 +20,65 @@ tables.performers=({storm: {email:"21",roles:{main:"judge",secondary:"performer"
   });
 
 
-var isObject = function(obj){
-	if(obj !== null && typeof obj === 'object' )
-		return true
-	else
-		return false;
-}
-
 var parentTree=new Array();
 
 var getObject = function(obj){
 	var output='';
-
 	if(obj === null || typeof(obj) !== 'object' ){//if it's just a value (not object)
         parentTree.push(obj)
 		output+=('<span class="cell" data-celltype="cell" data-location="'+parentTree.join(".")+'">'+obj+'</span>')
         parentTree.splice(-1,1);
-        // output+='<span id="'+parentTree.join(".")+'" class="tableAdd" onclick="addRow(this)" data-location="'+parentTree.join(".")+'" data-celltype="add"> + </span>';
 		return output;
 	}else{
 		Object.keys(obj).forEach(function(key) {
 			parentTree.push(key);
-			output+=('<br/><span class="parentRow" data-location="'+parentTree.join(".")+'" data-row="'+key+'"><span class="tableKill" class="kill" onclick="killRow(this)" data-location="'+parentTree.join(".")+'">X</span><span id="'+parentTree.join("-")+'" class="cell" data-celltype="key" data-location="'+parentTree.join(".")+'">'+key+'</span>'+getObject(obj[key],key)+'</span>');
+			output+=('<br/><span class="parentRow" data-location="'+parentTree.join(".")+'" data-row="'+key+'"><span class="tableKill" class="kill" onclick="killRow(this)" data-location="'+parentTree.join(".")+'">X</span><span id="'+parentTree.join("-")+'" class="key" data-celltype="key" data-location="'+parentTree.join(".")+'">'+key+'</span>'+getObject(obj[key],key)+'</span>');
 			parentTree.splice(-1,1);	
-			
-			// output+='<span id="'+parentTree.join(".")+'" class="tableAdd" onclick="addRow(this)" data-location="'+parentTree.join(".")+'" data-celltype="add"> + </span>';
 		})
 		return output;
 	}
 }
 
+//Function to generate a random key name because only unique keys can exist
 var randomKey=function(pre){return pre+(Math.floor(Math.random()*10000))};
 
+// when we want to destroy a row
 var killRow=function(obj){
 	setDeep(tables, obj.dataset.location.split('.'),"","kill");
 	showTables();
 }
 
-var addRow=function(obj){
+var addRow=function(obj,name){
     var loco=obj.dataset.location//+".newKey"
     loco=loco.split('.');
     loco.splice(-1,1);
-    loco.push(randomKey("newaddkey"));
+
+    if(name==undefined){
+        name=randomKey("new")
+    }
+
+    loco.push(randomKey("placeholder"));
 
     if(obj.dataset.celltype=="cell"){
-    //     loco.splice(-1,1);
-        setDeep(tables,loco,randomKey("downValue"),"addtab");
+        if(name!==undefined){
+            loco.splice(-1,1);
+            loco.push(name);
+            setDeep(tables,loco,name,"addtab");
+        }
+        else{
+            setDeep(tables,loco,name,"addtab");
+        }
     }
     else{
-        setDeep(tables,loco,randomKey("downValue"),"add");
+        setDeep(tables,loco,name,"add");    
     }
     showTables();
 }
 
 var changeCell = function(obj){
     console.log("Change Obj: ", obj);
-    var loco=obj.dataset.location//+".newKey"
-    loco=loco.split('.');
+    var loco=(obj.dataset.location).split('.');//+".newKey"
+    // loco=loco.split('.');
     if(obj.dataset.celltype=="cell")
         loco.splice(-1,1);
 	
@@ -84,12 +86,6 @@ var changeCell = function(obj){
 	showTables();
 };
 
-var enterDown=function(obj) {
-    addRow(obj);
-}
-var tabDown=function(obj) {
-    addRow(obj)
-}
 
 
 /**
@@ -101,7 +97,7 @@ var tabDown=function(obj) {
  * @param {!mixed} value - The value you want to set it to.
  */
 function setDeep(obj, path, value, mode) {
-    console.log("TB:",tables)
+    // console.log("TB:",tables)
 	path = path.filter(function(n){ return n != "" }); 
 
     let level = 0;
@@ -116,16 +112,25 @@ function setDeep(obj, path, value, mode) {
     		// // return a[b];
       //   }
       // Object.defineProperty(o, new_key, Object.getOwnPropertyDescriptor(o, old_key));
+
         if (mode=="addtab"){
             if (level === path.length-1){
                 console.log("Deep: addtab",a,b,value,a[b]);
                     console.log("ADDCELL")
-                    a[b]={somekey:"val"};
-                    level=path.length; //so that we jump out of the reduce
+                    var keytest='{"'+value+'":"val"}';
+                    a[b]=JSON.parse(keytest);//{keytest:"val"};
+                    // Object.defineProperty(a[b], value, Object.getOwnPropertyDescriptor(a[b], "somekey"));
+                    // delete a[b];
+                    level+=2; //so that we jump out of the reduce
                     return a[b];
             }
         }
         if (level === path.length){
+            if(mode=="addtab"){
+                // Object.defineProperty(a, value, Object.getOwnPropertyDescriptor(a, "somekey"));
+                // delete a[b];
+                return a;  //a[b]
+            }
         	if(mode=="key"){
         		console.log("Deep: key",a,b,value,a[b]);
         		Object.defineProperty(a, value, Object.getOwnPropertyDescriptor(a, b));
@@ -154,7 +159,6 @@ function setDeep(obj, path, value, mode) {
                 console.log("NOTOBJ",a,value);
                 a=value;
                 b=value
-                // return a;
             }
             a[b] = {};
             return a;

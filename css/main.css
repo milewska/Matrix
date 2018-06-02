@@ -41,6 +41,12 @@
     background-color: purple;
     margin: 4px;
 }
+.key{
+    color: white;
+    padding: 2px;
+    background-color: green;
+    margin: 4px;
+}
 
 html {
     color: #222;
