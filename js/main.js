@@ -26,7 +26,7 @@ function showTables(){
         if(e.keyCode == ENTER) {
             e.preventDefault();
             this.blur();
-            addRow(this,this.innerHTML)
+            addCell(this,this.innerHTML)
         }
     });
 
