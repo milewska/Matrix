@@ -88,13 +88,18 @@ var addRow=function(obj){
 }
 
 var changeCell = function(obj){
-    console.log("Change Obj: ", obj);
+    console.log("Change Cell: ", obj);
     var loco=(obj.dataset.location).split('.');
-    if(obj.dataset.celltype=="cell")
-        loco.splice(-1,1);
-	
-    setDeep(loco, obj.innerHTML, obj.dataset.celltype);
+    loco.splice(-1,1);
+    setCell(loco,obj.innerHTML);
 	showTables();
+};
+
+var changeKey = function(obj){
+    console.log("Change Key: ", obj);
+    var loco=(obj.dataset.location).split('.');
+    setKey(loco, obj.innerHTML, 'key');
+    showTables();
 };
 
 
@@ -103,7 +108,6 @@ var addTab=function(path,value){
     path = path.filter(function(n){ return n != "" }); 
 
     let level = 0;
-
     path.reduce((a, b)=>{
         level++;
 
@@ -123,10 +127,8 @@ var newKey=function(path,value){
     path = path.filter(function(n){ return n != "" }); 
 
     let level = 0;
-
     path.reduce((a, b)=>{
         level++;
-
         if (level === path.length){
             if(typeof a !== "object"){
                 console.log("ADDCELL")
@@ -143,52 +145,33 @@ var newKey=function(path,value){
     },tables);
 };
 
+
+function setCell(path, value) {
+    var i;
+    let obj=tables;
+
+    // path = path.split('.');
+    for (i = 0; i < path.length - 1; i++)
+        obj = obj[path[i]];
+
+    obj[path[i]] = value;
+}
+
 /**
  * Dynamically sets a deeply nested value in an object.
- * Optionally "bores" a path to it if its undefined.
- * @function
- * @param {!object} obj  - The object which contains the value you want to change/set.
- * @param {!array} path  - The array representation of path to the value you want to change/set.
- * @param {!mixed} value - The value you want to set it to.
  */
-function setDeep(path, value, mode) {
+function setKey(path, value, mode) {
     // console.log("TB:",tables)
 	path = path.filter(function(n){ return n != "" }); 
 
     let level = 0;
-
     path.reduce((a, b)=>{
         level++;
         if (level === path.length){
-        	if(mode=="key"){
-        		console.log("Deep: key",a,b,value,a[b]);
-        		Object.defineProperty(a, value, Object.getOwnPropertyDescriptor(a, b));
-    			delete a[b];
-                return;
-        	// }else if (mode=="add"){
-         //        console.log("Deep: add",a,b,value,a[b]);
-         //        if(typeof a !== "object"){
-         //            console.log("ADDCELL")
-         //            a[b]={somekey:"val"};
-         //            return a[b];
-         //        }
-         //        a[b]=value;
-         //        Object.defineProperty(a, value, Object.getOwnPropertyDescriptor(a, b));
-         //        delete a[b];
-         //        return;
-         //    }
-        }else if (mode=="cell"){
-        		console.log("Deep: cell, a: ",a, ". B: ",b,". Value: ",value,". A[B]: ",a[b]);
-        		a[b]=value;
-        		return a[b];
-        	}
-            // if(typeof a !== "object"){
-            //     console.log("NOTOBJ",a,value);
-            //     a=value;
-            //     b=value
-            // }
-            a[b] = {};
-            return a;
+    		console.log("Deep: key",a,b,value,a[b]);
+    		Object.defineProperty(a, value, Object.getOwnPropertyDescriptor(a, b));
+			delete a[b];
+            return;
         } else {
             return a[b];
         }

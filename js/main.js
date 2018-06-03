@@ -1,14 +1,18 @@
 function showTables(){
+    const TABKEY = 9;
+    const ENTER = 13;
+
     document.getElementById('displayArea').innerHTML=getObject(tables);
 
     var initialHTML;
-    $('.cell').bind('click', function(e) {
+    $('.cell,.key').bind('click', function(e) {
         initialHTML=$(this).html();
         $(this).attr('contentEditable', true);
         $(this).focus();
         $(this).select();  
-    }).blur(
-        function() {
+    })
+
+    $('.cell').bind('blur', function(e) {
             console.log("blur");
             $(this).attr('contentEditable', false);
             if((initialHTML!=$(this).html()) && ($(this).html()!=""))
@@ -16,9 +20,6 @@ function showTables(){
     }).keydown(
     function(e){
         console.log('keydown',e.keyCode)
-        var TABKEY = 9;
-        var ENTER = 13;
-
         if(e.keyCode == TABKEY) {
             // e.preventDefault();
             // addRow(this)
@@ -30,22 +31,14 @@ function showTables(){
         }
     });
 
-    $('.key').bind('click', function(e) {
-        initialHTML=$(this).html();
-        $(this).attr('contentEditable', true);
-        $(this).focus();
-    }).blur(
-        function() {
-            console.log("blur");
-            $(this).attr('contentEditable', false);
-            if((initialHTML!=$(this).html()) && ($(this).html()!=""))
-                changeCell(this);
+    $('.key').bind('blur', function(e) {
+        console.log("blur");
+        $(this).attr('contentEditable', false);
+        if((initialHTML!=$(this).html()) && ($(this).html()!=""))
+            changeKey(this);
     }).keydown(
     function(e){
         console.log('keydown',e.keyCode)
-        var TABKEY = 9;
-        var ENTER = 13;
-
         if(e.keyCode == TABKEY) {
             e.preventDefault();
             var next=$(this).next();
@@ -72,9 +65,12 @@ $(document).ready(function(){
     $("#people-storm").html("SUPERSTORM");
     $('#people-storm').trigger("blur");
 
-    changeCell(document.getElementById("people-SUPERSTORM"))
+    changeKey(document.getElementById("people-SUPERSTORM"))
 
-    changeCell(document.getElementById('people'))
+    changeCell(document.getElementById('people-wb-phones-home'))
+
+    changeKey(document.getElementById('people'))
+
 
     killRow(document.getElementById("performers"))
 
