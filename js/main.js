@@ -6,7 +6,7 @@ function showTables(){
 
     var initialHTML;
     $('.cell,.key').bind('click', function(e) {
-        initialHTML=$(this).html();
+        initialHTML=$(this).val();
         $(this).attr('contentEditable', true);
         $(this).focus();
         $(this).select();  
@@ -15,7 +15,7 @@ function showTables(){
     $('.cell').bind('blur', function(e) {
             console.log("blur");
             $(this).attr('contentEditable', false);
-            if((initialHTML!=$(this).html()) && ($(this).html()!=""))
+            if((initialHTML!=this.value) && (this.value!=""))
                 changeCell(this);
     }).keydown(
     function(e){
@@ -27,14 +27,14 @@ function showTables(){
         if(e.keyCode == ENTER) {
             e.preventDefault();
             this.blur();
-            addCell(this,this.innerHTML)
+            addCell(this,this.value)
         }
     });
 
     $('.key').bind('blur', function(e) {
         console.log("blur");
         $(this).attr('contentEditable', false);
-        if((initialHTML!=$(this).html()) && ($(this).html()!=""))
+        if((initialHTML!=this.value) && (this.value!=""))
             changeKey(this);
     }).keydown(
     function(e){
@@ -62,7 +62,7 @@ $(document).ready(function(){
     addRow(document.getElementById('people'))
     addRow(document.getElementById("topLevel"))
 
-    $("#people-storm").html("SUPERSTORM");
+    $("#people-storm").val("SUPERSTORM");
     $('#people-storm').trigger("blur");
 
     changeKey(document.getElementById("people-SUPERSTORM"))
