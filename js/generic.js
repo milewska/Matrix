@@ -22,19 +22,22 @@ tables.performers=({storm: {email:"21",roles:{main:"judge",secondary:"performer"
 
 var parentTree=new Array();
 
+let tabIndex=0;
+
 var getObject = function(obj){
 	var output='';
 	if(obj === null || typeof(obj) !== 'object' ){//if it's just a value (not object)
+        tabIndex++;
         parentTree.push(obj)
-		// output+=('<span class="cell" data-celltype="cell" data-location="'+parentTree.join(".")+'">'+obj+'</span>')
-        output+=('<input type="text" class="cell" data-celltype="cell" data-location="'+parentTree.join(".")+'" value="'+obj+'"/>'); 
+        output+=('<input type="text" id="'+tabIndex+'" class="cell" data-celltype="cell" data-location="'+parentTree.join(".")+'" value="'+obj+'"/>'); 
         parentTree.splice(-1,1);
 		return output;
 	}else{
 		Object.keys(obj).forEach(function(key) {
 			parentTree.push(key);
-			output+=('<br/><span class="parentRow" data-location="'+parentTree.join(".")+'" data-row="'+key+'"><span class="tableKill" class="kill" onclick="killRow(this)" data-location="'+parentTree.join(".")+'">X</span><input type="text" id="'+parentTree.join("-")+'" class="key" data-celltype="key" data-location="'+parentTree.join(".")+'" value="'+key+'" />'+getObject(obj[key],key)+'</span>');
-            // output+=('<br/> <span class="parentRow" data-location="'+parentTree.join(".")+'" data-row="'+key+'"><span class="tableKill" class="kill" onclick="killRow(this)" data-location="'+parentTree.join(".")+'">X</span><input type="text" id="'+parentTree.join("-")+'" class="key" data-celltype="key" data-location="'+parentTree.join(".")+'" value="'+getObject(obj[key],key)+'"/>');
+            tabIndex++;
+            // output+=('<br/><span class="parentRow" data-location="'+parentTree.join(".")+'" data-row="'+key+'"><span class="tableKill" class="kill" onclick="killRow(this)" data-location="'+parentTree.join(".")+'">X</span><input type="text" tabindex="'+tabIndex+'" id="'+parentTree.join("-")+'" class="key" data-celltype="key" data-location="'+parentTree.join(".")+'" value="'+key+'" />'+getObject(obj[key],key)+'</span>');
+			output+=('<br/><span class="parentRow" data-location="'+parentTree.join(".")+'" data-row="'+key+'"><span class="tableKill" class="kill" onclick="killRow(this)" data-location="'+parentTree.join(".")+'">X</span><input type="text" tabindex="'+tabIndex+'" id="'+tabIndex+'" class="key" data-celltype="key" data-location="'+parentTree.join(".")+'" value="'+key+'" />'+getObject(obj[key],key)+'</span>');
 			parentTree.splice(-1,1);	
 		})
 		return output;
@@ -55,7 +58,13 @@ var killRow=function(obj){
     path.reduce((a, b)=>{
         level++;
         if (level === path.length){
-            delete a[b];
+            if(typeof a[b]!=="object"){
+                console.log("OBJ!")
+                delete a[b]; 
+                // a[b]="newval"
+            }else{
+                a[b]="newVal";
+            }
             return;
         }else {
             return a[b];
@@ -72,7 +81,7 @@ var addCell=function(obj,name){
     loco.push(name);
     addTab(loco,name);
     
-    showTables();
+    showTables(loco);
 }
 
 var addRow=function(obj){
@@ -92,16 +101,12 @@ var changeCell = function(obj){
     var loco=(obj.dataset.location).split('.');
     loco.splice(-1,1);
     setCell(loco,obj.value);
-
-	showTables();
 };
 
 var changeKey = function(obj){
     console.log("Change Key: ", obj);
     var loco=(obj.dataset.location).split('.');
     setKey(loco, obj.value, 'key');
-
-    showTables();
 };
 
 
