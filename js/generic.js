@@ -43,9 +43,6 @@ var getObject = function(obj){
 	}
 }
 
-//Function to generate a random key name because only unique keys can exist
-var randomKey=function(pre){return pre+(Math.floor(Math.random()*10000))};
-
 // when we want to destroy a row
 var killRow=function(obj){
     let path=obj.dataset.location.split('.');
@@ -85,7 +82,6 @@ var addCell=function(obj,name){
         level++;
 
         if (level === path.length-1){
-            console.log("addtab",a,b,name,a[b]);
             var keytest='{"'+name+'":"val"}';
             a[b]=JSON.parse(keytest);
             return a[b];
@@ -103,13 +99,12 @@ var addRow=function(obj){
     loco.splice(-1,1);
     loco.push("placeholder");
 
-    let name=randomKey("new")
+    let name=Math.random().toString(36).substr(2, 7);
     newKey(loco,name);
     showTables(obj);
 }
 
 var changeCell = function(obj){
-    console.log("Change Cell: ", obj);
     var loco=(obj.dataset.location).split('.');
     loco.splice(-1,1);
 
@@ -121,11 +116,15 @@ var changeCell = function(obj){
 
     mod[loco[i]] = obj.value;
 
+    var final = [];
+    // console.log(findObjects(tables,obj.value,'val',final));
+    document.getElementById('extra').innerHTML=getObject(findObjects(tables,obj.value,'val',final));
+
+
     showTables(obj);
 };
 
 var changeKey = function(obj){
-    console.log("Change Key: ", obj);
     var loco=(obj.dataset.location).split('.');
 
     loco = loco.filter(function(n){ return n != "" }); 
@@ -134,7 +133,6 @@ var changeKey = function(obj){
     loco.reduce((a, b)=>{
         level++;
         if (level === loco.length){
-            console.log("Deep: key",a,b,obj.value,a[b]);
             Object.defineProperty(a, obj.value, Object.getOwnPropertyDescriptor(a, b));
             delete a[b];
             return;
@@ -146,7 +144,6 @@ var changeKey = function(obj){
     showTables(obj);
 };
 
-
 var newKey=function(path,value){
     path = path.filter(function(n){ return n != "" }); 
 
@@ -154,11 +151,6 @@ var newKey=function(path,value){
     path.reduce((a, b)=>{
         level++;
         if (level === path.length){
-            // if(typeof a !== "object"){
-            //     console.log("ADDCELL")
-            //     a[b]={somekey:"val"};
-            //     return a[b];
-            // }
             a[b]=value;
             Object.defineProperty(a, value, Object.getOwnPropertyDescriptor(a, b));
             delete a[b];
@@ -168,3 +160,35 @@ var newKey=function(path,value){
         }
     },tables);
 };
+
+function findObjects(obj, targetProp, targetValue, finalResults) {
+
+  function getObject(theObject) {
+    let result = null;
+    if (theObject instanceof Array) {
+      for (let i = 0; i < theObject.length; i++) {
+        getObject(theObject[i]);
+      }
+    }
+    else {
+      for (let prop in theObject) {
+        if(theObject.hasOwnProperty(prop)){
+          console.log(prop + ': ' + theObject[prop]);
+          if (prop === targetProp) {
+            // console.log('--found id');
+            // if (theObject[prop] === targetValue) {
+              console.log('----found porop', prop, ', ', theObject[prop]);
+              finalResults.push(theObject);
+            // }
+          }
+          if (theObject[prop] instanceof Object || theObject[prop] instanceof Array){
+            getObject(theObject[prop]);
+          }
+        }
+      }
+    }
+  }
+
+  getObject(obj);
+return finalResults;
+}

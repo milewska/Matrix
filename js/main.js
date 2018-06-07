@@ -1,6 +1,5 @@
 function showTables(latest){
     tabIndex=0;
-    console.log("LATEST:"+latest)
     const TABKEY = 9;
     const ENTER = 13;
 
@@ -8,7 +7,7 @@ function showTables(latest){
 
     var initialHTML;
     $('.cell,.key').bind('focus', function(e) {
-        console.log('focus')
+        // console.log('focus')
         initialHTML=this.value;
         $(this).select();  
     }).keydown(
@@ -35,7 +34,6 @@ function showTables(latest){
     });
 
     $('.key').bind('blur', function(e) {
-        console.log("blur");
         if((initialHTML!=this.value) && (this.value!="")){
             var next = '#'+(parseInt(this.id)+1);
             changeKey(this);
