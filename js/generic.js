@@ -36,7 +36,6 @@ var getObject = function(obj){
 		Object.keys(obj).forEach(function(key) {
 			parentTree.push(key);
             tabIndex++;
-            // output+=('<br/><span class="parentRow" data-location="'+parentTree.join(".")+'" data-row="'+key+'"><span class="tableKill" class="kill" onclick="killRow(this)" data-location="'+parentTree.join(".")+'">X</span><input type="text" tabindex="'+tabIndex+'" id="'+parentTree.join("-")+'" class="key" data-celltype="key" data-location="'+parentTree.join(".")+'" value="'+key+'" />'+getObject(obj[key],key)+'</span>');
 			output+=('<br/><span class="parentRow" data-location="'+parentTree.join(".")+'" data-row="'+key+'"><span class="tableKill" class="kill" onclick="killRow(this)" data-location="'+parentTree.join(".")+'">X</span><input type="text" tabindex="'+tabIndex+'" id="'+tabIndex+'" class="key" data-celltype="key" data-location="'+parentTree.join(".")+'" value="'+key+'" />'+getObject(obj[key],key)+'</span>');
 			parentTree.splice(-1,1);	
 		})
@@ -71,17 +70,31 @@ var killRow=function(obj){
         }
     },tables);
 
-	showTables();
+	showTables(obj);
 }
 
 var addCell=function(obj,name){
     var loco=obj.dataset.location;
     loco=loco.split('.');
     loco.splice(-1,1);
-    loco.push(name);
-    addTab(loco,name);
-    
-    showTables(loco);
+    loco.push(name);    
+
+    path = loco.filter(function(n){ return n != "" }); 
+    let level = 0;
+    path.reduce((a, b)=>{
+        level++;
+
+        if (level === path.length-1){
+            console.log("addtab",a,b,name,a[b]);
+            var keytest='{"'+name+'":"val"}';
+            a[b]=JSON.parse(keytest);
+            return a[b];
+        }else {
+            return a[b];
+        }
+    },tables);
+
+    showTables(obj);
 }
 
 var addRow=function(obj){
@@ -92,8 +105,7 @@ var addRow=function(obj){
     let name=randomKey("new")
     loco.push("placeholder");
     newKey(loco,name);
-
-    showTables();
+    showTables(obj);
 }
 
 var changeCell = function(obj){
@@ -101,32 +113,14 @@ var changeCell = function(obj){
     var loco=(obj.dataset.location).split('.');
     loco.splice(-1,1);
     setCell(loco,obj.value);
+    showTables(obj);
 };
 
 var changeKey = function(obj){
     console.log("Change Key: ", obj);
     var loco=(obj.dataset.location).split('.');
     setKey(loco, obj.value, 'key');
-};
-
-
-
-var addTab=function(path,value){
-    path = path.filter(function(n){ return n != "" }); 
-
-    let level = 0;
-    path.reduce((a, b)=>{
-        level++;
-
-        if (level === path.length-1){
-            console.log("addtab",a,b,value,a[b]);
-            var keytest='{"'+value+'":"val"}';
-            a[b]=JSON.parse(keytest);
-            return a[b];
-        }else {
-            return a[b];
-        }
-    },tables);
+    showTables(obj);
 };
 
 
