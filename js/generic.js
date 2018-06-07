@@ -101,9 +101,9 @@ var addRow=function(obj){
     var loco=obj.dataset.location;
     loco=loco.split('.');
     loco.splice(-1,1);
+    loco.push("placeholder");
 
     let name=randomKey("new")
-    loco.push("placeholder");
     newKey(loco,name);
     showTables(obj);
 }
@@ -112,14 +112,37 @@ var changeCell = function(obj){
     console.log("Change Cell: ", obj);
     var loco=(obj.dataset.location).split('.');
     loco.splice(-1,1);
-    setCell(loco,obj.value);
+
+    let i;
+    let mod=tables;
+
+    for (i = 0; i < loco.length - 1; i++)
+        mod = mod[loco[i]];
+
+    mod[loco[i]] = obj.value;
+
     showTables(obj);
 };
 
 var changeKey = function(obj){
     console.log("Change Key: ", obj);
     var loco=(obj.dataset.location).split('.');
-    setKey(loco, obj.value, 'key');
+
+    loco = loco.filter(function(n){ return n != "" }); 
+
+    let level = 0;
+    loco.reduce((a, b)=>{
+        level++;
+        if (level === loco.length){
+            console.log("Deep: key",a,b,obj.value,a[b]);
+            Object.defineProperty(a, obj.value, Object.getOwnPropertyDescriptor(a, b));
+            delete a[b];
+            return;
+        } else {
+            return a[b];
+        }
+    }, tables);
+
     showTables(obj);
 };
 
@@ -131,11 +154,11 @@ var newKey=function(path,value){
     path.reduce((a, b)=>{
         level++;
         if (level === path.length){
-            if(typeof a !== "object"){
-                console.log("ADDCELL")
-                a[b]={somekey:"val"};
-                return a[b];
-            }
+            // if(typeof a !== "object"){
+            //     console.log("ADDCELL")
+            //     a[b]={somekey:"val"};
+            //     return a[b];
+            // }
             a[b]=value;
             Object.defineProperty(a, value, Object.getOwnPropertyDescriptor(a, b));
             delete a[b];
@@ -145,31 +168,3 @@ var newKey=function(path,value){
         }
     },tables);
 };
-
-function setCell(path, value) {
-    var i;
-    let obj=tables;
-
-    for (i = 0; i < path.length - 1; i++)
-        obj = obj[path[i]];
-
-    obj[path[i]] = value;
-}
-
-
-function setKey(path, value, mode) {
-	path = path.filter(function(n){ return n != "" }); 
-
-    let level = 0;
-    path.reduce((a, b)=>{
-        level++;
-        if (level === path.length){
-    		console.log("Deep: key",a,b,value,a[b]);
-    		Object.defineProperty(a, value, Object.getOwnPropertyDescriptor(a, b));
-			delete a[b];
-            return;
-        } else {
-            return a[b];
-        }
-    }, tables);
-}
