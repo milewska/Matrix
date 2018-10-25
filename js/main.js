@@ -14,13 +14,12 @@ function showTables(latest){
     }).keyup(function(e){
         if(e.keyCode == TABKEY) {
             e.preventDefault();
-            $('#'+(parseInt(this.id)+1)).focus();
+            // $('#'+(parseInt(this.id)+1)).focus();
         }
     });
     $('.cell').bind('blur', function(e) {
-        console.log("blur");
         if((initialHTML!=this.value) && (this.value!="")){
-            changeCell(this)
+            changeCell(this,this.value);
         }
     }).keyup(function(e){
         seekExisting(this);
@@ -34,21 +33,42 @@ function showTables(latest){
     });
     $('.key').bind('blur', function(e) {
         if((initialHTML!=this.value) && (this.value!="")){
-            changeKey(this);
+            this.value=initialHTML;
         }
-    }).keyup(function(e){
+    }).keydown(function(e){
         seekExisting(this)
         if(e.keyCode == ENTER) {
             e.preventDefault();
-            this.blur();
+            if((initialHTML!=this.value) && (this.value!="")){
+                changeKey(this,this.value);
+            }
             addRow(this)
+        }
+        if(e.keyCode == TABKEY) {
+            if((initialHTML!=this.value) && (this.value!="")){
+                changeKey(this,this.value);
+            }
         }
     });
 //end binding keyboard keys for events
 
-
     if(latest)//this is just to focus on the next field after a key event 
         $('#'+(parseInt(latest.id)+1)).focus();
+
+  
+    // setup autocomplete function pulling from currencies[] array
+    $('.cell').autocomplete({
+        lookup: getFlat(tables),
+        onSelect: function (suggestion) {
+            changeCell(this,suggestion.value)
+        }
+    });    
+    $('.key').autocomplete({
+        lookup: getFlat(tables),
+        onSelect: function (suggestion) {
+            changeKey(this,suggestion.value)
+        }
+    });
 }
 
 $(document).ready(function(){

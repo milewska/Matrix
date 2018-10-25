@@ -33,7 +33,7 @@ var getObject = function(obj){
 }
 
 // when we want to destroy a row
-var killRow=function(obj){
+let killRow=function(obj){
     let path=obj.dataset.location.split('.');
 
     path = path.filter(function(n){ return n != "" }); 
@@ -56,8 +56,17 @@ var killRow=function(obj){
     },tables);
     showTables(obj)
 }
+let addRow=function(obj){
+    var loco=obj.dataset.location;
+    loco=loco.split('.');
+    loco.splice(-1,1);
+    loco.push("placeholder");
 
-var addCell=function(obj,name){
+    let name=Math.random().toString(36).substr(2, 7);
+    newKey(loco,name);
+}
+
+let addCell=function(obj,name){
     console.log("addcell")
     var loco=obj.dataset.location;
     loco=loco.split('.');
@@ -79,19 +88,8 @@ var addCell=function(obj,name){
     showTables(obj)
 }
 
-var addRow=function(obj){
-    var loco=obj.dataset.location;
-    loco=loco.split('.');
-    loco.splice(-1,1);
-    loco.push("placeholder");
-
-    let name=Math.random().toString(36).substr(2, 7);
-    newKey(loco,name);
-}
-
-var changeCell = function(obj){
-    let value=obj.value
-    console.log('val',value)
+let changeCell = function(obj,value){
+    console.log('ChangeCell Val',value)
     var path=(obj.dataset.location).split('.');
     path.splice(-1,1);
 
@@ -106,24 +104,43 @@ var changeCell = function(obj){
             return a[b];
         }
     },tables);
-    showTables()
-    showTables(obj);
 
     seekExisting(obj);
 };
 
-var changeKey = function(obj){
-    let path=(obj.dataset.location).split('.');
-    newKey(path,obj.value);
+let changeKey = function(obj,value){
+    // let path=(obj.dataset.location).split('.');
+    // newKey(path,value);
+    console.log("obj: ",obj, "Value: ",value)
+
+    var loco=(obj.dataset.location).split('.');
+
+    loco = loco.filter(function(n){ return n != "" }); 
+
+    let level = 0;
+    loco.reduce((a, b)=>{
+        level++;
+        if (level === loco.length){
+            Object.defineProperty(a, value, Object.getOwnPropertyDescriptor(a, b));
+            delete a[b];
+            return;
+        } else {
+            return a[b];
+        }
+    }, tables);
+
+    showTables(obj);
+
 };
 
-var newKey=function(path,value){
+let newKey=function(path,value){
     path = path.filter(function(n){ return n != "" }); 
     let level = 0;
     path.reduce((a, b)=>{
         level++;
         if (level === path.length){
-            a[b]=value;
+            if(a[b] === undefined)//need this to use for "new key"
+                a[b]=value;
             Object.defineProperty(a, value, Object.getOwnPropertyDescriptor(a, b));
             delete a[b];
             return;
@@ -134,14 +151,39 @@ var newKey=function(path,value){
     showTables()
 }
 
-var seekExisting = function(obj){
-    document.getElementById('extra').innerHTML=findObjects(tables,obj.value);
+let seekExisting = function(obj){
+    document.getElementById('extra').innerHTML=getObject(findObjects(tables,obj.value));
+}
+let getFlat = function(obj){
+    flat = [];
+    flattenObject(obj)
+    return uniq(flat);
+}
+
+let flat = [];
+let flattenObject = function(obj) {
+        if (obj instanceof Object){
+            for (let a in obj) {
+                if (obj[a] instanceof Object || obj[a]!==undefined){
+                    flat.push(a);
+                    flattenObject(obj[a]);
+                }
+                else{
+                    flat.push(a)
+                }
+            }
+        }else{
+            flat.push(obj) 
+        }
+};
+function uniq(a) {
+    var seen = {};
+    return a.filter(function(item) {
+        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+    });
 }
 
 function findObjects(library, targetProp) {
-    let finalResults=[];
-    drillDown(library);
-
     function drillDown(theObject) {
         let result = null;
         if (theObject instanceof Array) {
@@ -152,15 +194,9 @@ function findObjects(library, targetProp) {
           for (let prop in theObject) {
             if(theObject.hasOwnProperty(prop)){
               if (prop === targetProp) {
-                console.log('--found id');
                 finalResults.push(theObject[prop]);
-                // if (theObject[prop] === targetProp) {
-                //   console.log('----found prop', prop, ', ', theObject[prop]);
-                //   // finalResults.push(theObject);
-                // }
               }
               if (theObject[prop] === targetProp) {
-                  console.log('----found prop', prop, ', ', theObject[prop]);
                   finalResults.push(theObject); //can use "prop" to just show the label..
               }
               if (theObject[prop] instanceof Object || theObject[prop] instanceof Array){
@@ -171,5 +207,7 @@ function findObjects(library, targetProp) {
         }
     }
 
-    return getObject(finalResults);
+    let finalResults=[];
+    drillDown(library);
+    return finalResults;
 }
