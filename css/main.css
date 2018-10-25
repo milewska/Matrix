@@ -3,6 +3,9 @@
 #extra{
     background-color: red;
     border: solid 1px red;
+    width: 500px;
+    height: 200px;
+    overflow: scroll;
 }
 .table{
     background-color: grey;

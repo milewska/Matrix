@@ -1,23 +1,13 @@
 var tables = new Object();
-tables.people=({
-    storm: {
+tables.storm=({
         email:"21",
-        roles:{
-            main:"judge",
-            secondary:"performer"}
-        },
-      wb: {
-        phones: {home: "456", cell:"123"},
-        flight: "21"
-      }
+        contact:"Anna"
+  });
+tables.mufasa=({
+        email:"2321",
+        contact:"WB"
   });
 
-tables.performers=({storm: {email:"21",roles:{main:"judge",secondary:"performer"}},
-      wb: {
-        phones: {home: "456", cell:"123"},
-        flight: "21"
-      }
-  });
 
 
 var parentTree=new Array();
@@ -57,7 +47,6 @@ var killRow=function(obj){
             if(typeof a[b]!=="object"){
                 console.log("OBJ!")
                 delete a[b]; 
-                // a[b]="newval"
             }else{
                 a[b]="newVal";
             }
@@ -66,11 +55,11 @@ var killRow=function(obj){
             return a[b];
         }
     },tables);
-
-	showTables(obj);
+    showTables(obj)
 }
 
 var addCell=function(obj,name){
+    console.log("addcell")
     var loco=obj.dataset.location;
     loco=loco.split('.');
     loco.splice(-1,1);
@@ -80,17 +69,15 @@ var addCell=function(obj,name){
     let level = 0;
     path.reduce((a, b)=>{
         level++;
-
         if (level === path.length-1){
-            var keytest='{"'+name+'":"val"}';
+            let keytest='{"'+name+'":"val"}';
             a[b]=JSON.parse(keytest);
             return a[b];
         }else {
             return a[b];
         }
     },tables);
-
-    showTables(obj);
+    showTables(obj)
 }
 
 var addRow=function(obj){
@@ -101,7 +88,6 @@ var addRow=function(obj){
 
     let name=Math.random().toString(36).substr(2, 7);
     newKey(loco,name);
-    showTables(obj);
 }
 
 var changeCell = function(obj){
@@ -116,37 +102,16 @@ var changeCell = function(obj){
 
     mod[loco[i]] = obj.value;
 
-    var final = [];
-    // console.log(findObjects(tables,obj.value,'val',final));
-    document.getElementById('extra').innerHTML=getObject(findObjects(tables,obj.value,'val',final));
-
-
-    showTables(obj);
+    seekExisting(obj);
 };
 
 var changeKey = function(obj){
-    var loco=(obj.dataset.location).split('.');
-
-    loco = loco.filter(function(n){ return n != "" }); 
-
-    let level = 0;
-    loco.reduce((a, b)=>{
-        level++;
-        if (level === loco.length){
-            Object.defineProperty(a, obj.value, Object.getOwnPropertyDescriptor(a, b));
-            delete a[b];
-            return;
-        } else {
-            return a[b];
-        }
-    }, tables);
-
-    showTables(obj);
+    let path=(obj.dataset.location).split('.');
+    newKey(path,obj.value);
 };
 
 var newKey=function(path,value){
     path = path.filter(function(n){ return n != "" }); 
-
     let level = 0;
     path.reduce((a, b)=>{
         level++;
@@ -159,36 +124,45 @@ var newKey=function(path,value){
             return a[b];
         }
     },tables);
-};
+    showTables()
+}
 
-function findObjects(obj, targetProp, targetValue, finalResults) {
+var seekExisting = function(obj){
+    document.getElementById('extra').innerHTML=findObjects(tables,obj.value);
+}
 
-  function getObject(theObject) {
-    let result = null;
-    if (theObject instanceof Array) {
-      for (let i = 0; i < theObject.length; i++) {
-        getObject(theObject[i]);
-      }
-    }
-    else {
-      for (let prop in theObject) {
-        if(theObject.hasOwnProperty(prop)){
-          console.log(prop + ': ' + theObject[prop]);
-          if (prop === targetProp) {
-            // console.log('--found id');
-            // if (theObject[prop] === targetValue) {
-              console.log('----found porop', prop, ', ', theObject[prop]);
-              finalResults.push(theObject);
-            // }
+function findObjects(library, targetProp) {
+    let finalResults=[];
+    drillDown(library);
+
+    function drillDown(theObject) {
+        let result = null;
+        if (theObject instanceof Array) {
+          for (let i = 0; i < theObject.length; i++) {
+            drillDown(theObject[i]);
           }
-          if (theObject[prop] instanceof Object || theObject[prop] instanceof Array){
-            getObject(theObject[prop]);
+        }else {
+          for (let prop in theObject) {
+            if(theObject.hasOwnProperty(prop)){
+              if (prop === targetProp) {
+                console.log('--found id');
+                finalResults.push(theObject[prop]);
+                // if (theObject[prop] === targetProp) {
+                //   console.log('----found prop', prop, ', ', theObject[prop]);
+                //   // finalResults.push(theObject);
+                // }
+              }
+              if (theObject[prop] === targetProp) {
+                  console.log('----found prop', prop, ', ', theObject[prop]);
+                  finalResults.push(theObject); //can use "prop" to just show the label..
+              }
+              if (theObject[prop] instanceof Object || theObject[prop] instanceof Array){
+                drillDown(theObject[prop]);
+              }
+            }
           }
         }
-      }
     }
-  }
 
-  getObject(obj);
-return finalResults;
+    return getObject(finalResults);
 }

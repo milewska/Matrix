@@ -5,55 +5,61 @@ function showTables(latest){
 
     document.getElementById('displayArea').innerHTML=getObject(tables);
 
-    var initialHTML;
+    let initialHTML;
+
+    //bind keyboard events
     $('.cell,.key').bind('focus', function(e) {
-        // console.log('focus')
         initialHTML=this.value;
         $(this).select();  
-    }).keydown(
-    function(e){
+    }).keyup(function(e){
         if(e.keyCode == TABKEY) {
             e.preventDefault();
             $('#'+(parseInt(this.id)+1)).focus();
         }
     });
-
     $('.cell').bind('blur', function(e) {
         console.log("blur");
         if((initialHTML!=this.value) && (this.value!="")){
             var next = '#'+(parseInt(this.id)+1);
             changeCell(this)
         }
-    }).keydown(
-    function(e){
+    }).keyup(function(e){
+        seekExisting(this);
         if(e.keyCode == ENTER) {
             e.preventDefault();
             this.blur();
             addCell(this,this.value)
         }
+    }).focus(function(e){
+        seekExisting(document.getElementById(this.id-1));
     });
-
     $('.key').bind('blur', function(e) {
         if((initialHTML!=this.value) && (this.value!="")){
             var next = '#'+(parseInt(this.id)+1);
             changeKey(this);
         }
-
-    }).keydown(
-    function(e){
+    }).keyup(function(e){
+        seekExisting(this)
         if(e.keyCode == ENTER) {
             e.preventDefault();
             this.blur();
             addRow(this)
         }
     });
-    if(latest)//this is just for the very first display.. 
-        $('#'+(parseInt(latest.id)+1)).focus();
+//end binding keyboard keys for events
+
+
+    // if(latest)//this is just to focus on the next field after a key event 
+    //     $('#'+(parseInt(latest.id)+1)).focus();
 }
 
 $(document).ready(function(){
 	showTables(document.getElementById("1"));
-    // Tests
+});
+
+$('#tester').click(function(){
+       // Tests
+       console.log(tables.performers.storm)
     // addRow(document.getElementById("people-storm"))
     // addRow(document.getElementById('people-storm-email'))
     // addRow(document.getElementById('people-storm-roles'))
@@ -73,5 +79,5 @@ $(document).ready(function(){
     // killRow(document.getElementById("performers"))
 
     //end tests
-});
+})
 
