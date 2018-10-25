@@ -20,7 +20,6 @@ function showTables(latest){
     $('.cell').bind('blur', function(e) {
         console.log("blur");
         if((initialHTML!=this.value) && (this.value!="")){
-            var next = '#'+(parseInt(this.id)+1);
             changeCell(this)
         }
     }).keyup(function(e){
@@ -35,7 +34,6 @@ function showTables(latest){
     });
     $('.key').bind('blur', function(e) {
         if((initialHTML!=this.value) && (this.value!="")){
-            var next = '#'+(parseInt(this.id)+1);
             changeKey(this);
         }
     }).keyup(function(e){
@@ -49,8 +47,8 @@ function showTables(latest){
 //end binding keyboard keys for events
 
 
-    // if(latest)//this is just to focus on the next field after a key event 
-    //     $('#'+(parseInt(latest.id)+1)).focus();
+    if(latest)//this is just to focus on the next field after a key event 
+        $('#'+(parseInt(latest.id)+1)).focus();
 }
 
 $(document).ready(function(){

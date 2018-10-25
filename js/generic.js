@@ -9,8 +9,7 @@ tables.mufasa=({
   });
 
 
-
-var parentTree=new Array();
+let parentTree=new Array();
 
 let tabIndex=0;
 
@@ -91,16 +90,24 @@ var addRow=function(obj){
 }
 
 var changeCell = function(obj){
-    var loco=(obj.dataset.location).split('.');
-    loco.splice(-1,1);
+    let value=obj.value
+    console.log('val',value)
+    var path=(obj.dataset.location).split('.');
+    path.splice(-1,1);
 
-    let i;
-    let mod=tables;
-
-    for (i = 0; i < loco.length - 1; i++)
-        mod = mod[loco[i]];
-
-    mod[loco[i]] = obj.value;
+    path = path.filter(function(n){ return n != "" }); 
+    let level = 0;
+    path.reduce((a, b)=>{
+        level++;
+        if (level === path.length){
+            a[b]=value;
+            return;
+        }else {
+            return a[b];
+        }
+    },tables);
+    showTables()
+    showTables(obj);
 
     seekExisting(obj);
 };
