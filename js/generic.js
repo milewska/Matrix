@@ -26,22 +26,7 @@ tables.Nobu=({
 
 
 let parentTree=new Array();
-
 let tabIndex=0;
-
-function deepReplace(obj,type) {
-  var keys = Object.keys(obj);
-  keys.forEach(function(key) {
-    var value = obj[key];
-    if (typeof value === 'string') {
-        
-        obj[key] = (value);//this changes it
-        
-    } else if (typeof value === 'object') {
-      deepReplace(obj[key],type);
-    }
-  });
-}
 
 
 var getObject = function(obj){
@@ -56,11 +41,21 @@ var getObject = function(obj){
 		Object.keys(obj).forEach(function(key) {
 			parentTree.push(key);
             tabIndex++;
-			output+=('<br/><span class="parentRow" data-location="'+parentTree.join(">")+'" data-row="'+key+'"><span class="tableKill" class="kill" onclick="killRow(this)" data-location="'+parentTree.join(">")+'">X</span><input type="text" tabindex="'+tabIndex+'" id="'+tabIndex+'" class="key" data-celltype="key" data-location="'+parentTree.join(">")+'" value="'+key+'" />'+getObject(obj[key],key)+'</span>');
+			output+=('<span class="parentRow" data-location="'+parentTree.join(">")+'" data-row="'+key+'"><span class="tableKill" class="kill" onclick="killRow(this)" data-location="'+parentTree.join(">")+'">X</span><input type="text" tabindex="'+tabIndex+'" id="'+tabIndex+'" class="key" data-celltype="key" data-location="'+parentTree.join(">")+'" value="'+key+'" />'+getObject(obj[key],key)+'</span>');
 			parentTree.splice(-1,1);	
 		})
 		return output;
 	}
+}
+
+
+let addRow=function(obj){
+    console.log(obj)
+    var loco=obj.dataset.location;
+    loco=loco.split(">");
+    loco.splice(-1,1);
+    loco.push("placeholder");
+    newKey(loco,Math.random().toString(36).substr(2, 7));
 }
 
 // when we want to destroy a row
@@ -85,15 +80,7 @@ let killRow=function(obj){
             return a[b];
         }
     },tables);
-    showTables()
-}
-
-let addRow=function(obj){
-    var loco=obj.dataset.location;
-    loco=loco.split(">");
-    loco.splice(-1,1);
-    loco.push("placeholder");
-    newKey(loco,Math.random().toString(36).substr(2, 7));
+    showTables(obj)
 }
 
 let addCell=function(obj,value){
@@ -157,6 +144,7 @@ let changeKey = function(obj,value){
 };
 
 let newKey=function(path,value){
+    console.log("Path: ",path);
     path = path.filter(function(n){ return n != "" }); 
     let level = 0;
     path.reduce((a, b)=>{
@@ -171,7 +159,7 @@ let newKey=function(path,value){
             return a[b];
         }
     },tables);
-    showTables()
+    showTables();//Don't know the exact object to select so oh well
 }
 
 let seekExisting = function(obj){

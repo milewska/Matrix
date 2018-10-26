@@ -14,10 +14,11 @@
 .autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
 
 #extra{
-    background-color: blue;
+    /*background-color: rgba(100,100,100,.5);*/
+    border-radius: 10px;
     border: solid 1px;
     width: 500px;
-    height: 200px;
+    max-height: 200px;
     overflow: scroll;
     position: fixed;
     left: 500px;
@@ -27,48 +28,34 @@
     background-color: grey;
     border: solid 1px black;
     display: block;
-    margin: 10px;
-    padding: 10px;
-    width: 30%;
+    margin: 5px;
+    padding: 5px;
+    width: 20%;
     overflow: hidden;
+    position: absolute;
 }
 .parentRow{
-    background-color: rgba(200,200,200,.5);
+    /*background-color: rgba(200,200,200,.5);*/
     padding-left: 20px;
+    margin: 2px;
     display: block;
-    position: relative;
-}
-.tableKillr{
-    color: red;
-    font-size: 8px;
-    background-color: black;
-    cursor: pointer;
-    padding: 2px;
-    border-radius: 6px;
-}
-.tableAddr{
-    color: green;
-    font-size: 26px;
-    font-weight: bold;
-    background-color: white;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 10px;
+    /*width: 500px;*/
+    font-size: .9em;
 }
 .tableRow{
     background-color: green;
 }
-.cell{
-    color: white;
+input{
     padding: 2px;
-    background-color: purple;
-    margin: 4px;
+    margin: 2px;
+    border: 1px solid black;
+    border-radius: 5px;
 }
 .key{
-    color: white;
-    padding: 2px;
-    background-color: green;
-    margin: 4px;
+    background-color: rgba(88, 213, 193, 0.8);
+}
+.cell{
+    background-color: rgba(182, 64, 193, 0.8);  
 }
 
 html {
