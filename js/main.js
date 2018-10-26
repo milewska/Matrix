@@ -9,6 +9,8 @@ function showTables(latest){
 
     //bind keyboard events
     $('.cell,.key').bind('focus', function(e) {
+        console.log("Focus")
+        seekExisting(this);
         initialHTML=this.value;
         $(this).select();  
     }).keyup(function(e){
@@ -22,21 +24,21 @@ function showTables(latest){
             changeCell(this,this.value);
         }
     }).keyup(function(e){
-        seekExisting(this);
+        // seekExisting(this);
         if(e.keyCode == ENTER) {
             e.preventDefault();
             this.blur();
             addCell(this,this.value)
         }
     }).focus(function(e){
-        seekExisting(document.getElementById(this.id-1));
+        // seekExisting(document.getElementById(this.id-1));
     });
     $('.key').bind('blur', function(e) {
         if((initialHTML!=this.value) && (this.value!="")){
             this.value=initialHTML;
         }
     }).keydown(function(e){
-        seekExisting(this)
+        // seekExisting(this)
         if(e.keyCode == ENTER) {
             e.preventDefault();
             if((initialHTML!=this.value) && (this.value!="")){

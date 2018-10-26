@@ -14,11 +14,14 @@
 .autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
 
 #extra{
-    background-color: red;
-    border: solid 1px red;
+    background-color: blue;
+    border: solid 1px;
     width: 500px;
     height: 200px;
     overflow: scroll;
+    position: fixed;
+    left: 500px;
+    z-index: 100;
 }
 .table{
     background-color: grey;
